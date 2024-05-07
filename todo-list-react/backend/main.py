@@ -37,8 +37,8 @@ def create_task(task: TaskSchema):
 # Updates task
 @app.put("/todos/edit/{id}")
 def update_task(id: int, task: UpdateTask):
-    # if id not in tasks:
-    #     return {'error': 'ID not found'}
+    if id not in tasks:
+        return {'error': 'ID not found'}
     if task.task_name != None:
         tasks[id].task_name = task.task_name
     if task.is_completed != None:
@@ -49,7 +49,7 @@ def update_task(id: int, task: UpdateTask):
 # Deletes task
 @app.delete("/tasks/delete/{id}")
 def delete_task(id: int):
-    # if id not in tasks:
-    #     return {"error": "ID not found"}
+    if id not in tasks:
+        return {"error": "ID not found"}
     del tasks[id]
     return {"msg":"todo has been deleted successfully"}
