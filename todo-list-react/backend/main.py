@@ -2,6 +2,11 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from typing import Optional, List, Dict
 
+
+# run this in order
+# ./venv/Scripts/activate
+# uvicorn main:app --reload
+
 app = FastAPI()
 
 tasks = []
@@ -27,6 +32,7 @@ def get_task_by_id(id: int):
     for task in tasks:
         if task.id == id:
             return task
+        
 
 # post new task
 @app.post("/tasks/new")
@@ -35,21 +41,18 @@ def create_task(task: TaskSchema):
     return {"success": True, "message": "successfully created task"}
 
 # Updates task
-@app.put("/todos/edit/{id}")
-def update_task(id: int, task: UpdateTask):
-    if id not in tasks:
-        return {'error': 'ID not found'}
-    if task.task_name != None:
-        tasks[id].task_name = task.task_name
-    if task.is_completed != None:
-        tasks[id].is_completed = task.is_completed
-    
-    return tasks[id]
+@app.put("/todos/{id}")
+def update_task(id: int, new_task: UpdateTask):
+    for index, task in enumerate(tasks):
+        if task.id == id:
+            tasks[index] = new_task
+            tasks[index].id = id
+            return {"success": True, "message": "successfully edited task"}
 
 # Deletes task
-@app.delete("/tasks/delete/{id}")
+@app.delete("/tasks/{id}")
 def delete_task(id: int):
-    if id not in tasks:
-        return {"error": "ID not found"}
-    del tasks[id]
-    return {"msg":"todo has been deleted successfully"}
+    for index, task in enumerate(tasks):
+        if task.id == id:
+            del tasks[index]
+            return {"msg":"todo has been deleted successfully"}
